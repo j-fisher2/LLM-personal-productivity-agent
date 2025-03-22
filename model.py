@@ -2,6 +2,10 @@ import requests
 import webbrowser
 import time
 from schedule_event import schedule_event, verify_scheduling_output
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 def get_google_search_url(query):
     return f"https://www.google.com/search?q={query.replace(' ', '+')}"
@@ -10,7 +14,7 @@ while True:
     print("Message: ",end="")
     command = input("")
 
-    url = "http://localhost:11434/api/generate"
+    url = os.getenv("LLM_ENDPOINT")
     data = {
         "model": "mistral",
         "prompt": f"""
