@@ -1,14 +1,12 @@
 import subprocess
 from datetime import datetime, timedelta
 
-def schedule_event(event_name, location, start_time_year, start_time_month, start_time_day, start_time_hour, start_time_minute, duration_minutes, start_time_second =0, calendar_name="Work"):
+def schedule_event(event_name, location, start_time_year, start_time_month, start_time_day, start_time_hour, start_time_minute, duration_minutes, start_time_second = 0, calendar_name="Work"):
 
     start_time = start_time = datetime(start_time_year, start_time_month, start_time_day, start_time_hour, start_time_minute, start_time_second)
     
-    # Calculate end time
     end_time = start_time + timedelta(minutes=duration_minutes)
 
-    # Format start and end times for AppleScript's expected format
     start_str = start_time.strftime("%A, %B %d, %Y at %I:%M:%S %p")
     end_str = end_time.strftime("%A, %B %d, %Y at %I:%M:%S %p")
 
@@ -28,3 +26,6 @@ def schedule_event(event_name, location, start_time_year, start_time_month, star
         print(f"❌ Failed to schedule event.")
 
 
+def verify_scheduling_output(text):
+    required_keys = ["location: ", "start_year: ", "start_month: ", "start_day: ", "start_hour: ", "start_minute: ", "duration_minutes: ", "event_name: "]
+    return all(key in text for key in required_keys) 
