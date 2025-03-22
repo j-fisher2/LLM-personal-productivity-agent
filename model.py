@@ -1,7 +1,7 @@
 import requests
 import webbrowser
 import time
-from .schedule_event import schedule_event
+from schedule_event import schedule_event, verify_scheduling_output
 
 #schedule_event(event_name, location, 2025, 3, 25, 10, 0, duration_minutes, calendar_name="Work")
 
@@ -27,9 +27,11 @@ while True:
         ACTION: Attempting to open [component_name]
     - If the user asks you to search for something or to find something **always respond with:**
         ACTION: Searching [component_name] where the component_name is their query and it is properly formatted for google searches without `for` as a prefix.
+    - If the user asks you to schedule an event or meeting, make sure that the user provides an event name, an event location, a start year, a start month, a start day, a start hour and a start minute and **always respond with:**:
+        ACTION: Scheduling your event with the following fields - [component_name] where the component_name is a JSON object of all the fields you have extracted from the query. If minutes are not provided they are set to 0. If a year is not provided you may assume the year is 2025 and just place 2025 in the response with no other details. If an event name is not provided, assume it is the same as the location and just place it in the response with no other details. **always** use commas to seperate the fields. **do not** add any additional output or comments to your response and always format it exactly as in the examples below.
 
     🚫 **No Action Format:**  
-    - If the request **does not** require opening something or retrieving a query response, respond with:  
+    - If the request **does not** require opening something or retrieving a query response, or to schedule a meeting or event, respond with:  
         NO_ACTION: [your helpful response]
 
     ---
@@ -47,8 +49,30 @@ while True:
     - "What can i do at Canada's wonderland?" → ACTION: Searching `things to do at Canada's wonderland`
     - "what can I do when going to India next year?" → ACTION: Searching `things to do in india`
     - "find me a good movie to watch" → ACTION: Searching `good movies to watch`
+    - "Schedule a meeting for me called starbucks_meeting on March 25, 2025 at 10:15AM at Starbucks lasting 20 minutes" 
+    → ACTION: Scheduling your meeting meeting with the following fields - location: Starbucks, start_year: 2025, start_month: 3, start_day: 25, start_hour: 10, start_minute: 15, duration_minutes: 20 
 
-    ---
+    - "Schedule a meeting on April 5, 2025 at 2:20PM at Microsoft lasting 35 minutes" 
+    → ACTION: Scheduling your meeting with the following fields - 
+        event_name: MeetingAtMicrosoft
+        location: Harry HQ,
+        start_year: 2025,
+        start_month: 4,
+        start_day: 5,
+        start_hour: 14,
+        start_minute: 20,
+        duration_minutes: 35
+    - "Schedule a meeting on April 5 at 2:20PM at Harry HQ lasting 35 minutes" 
+    → ACTION: Scheduling your event with the following fields - 
+        event_name: MeetingAtHarry HQ,
+        location: Harry HQ,
+        start_year: 2025,
+        start_month: 4,
+        start_day: 5,
+        start_hour: 14,
+        start_minute: 20,
+        duration_minutes: 35
+
 
     Now, respond to this command:  
     **{command}**
@@ -73,3 +97,20 @@ while True:
     elif "ACTION: Searching" in result:
         query = result.split("Searching")[-1].replace("`","").strip()
         webbrowser.open(get_google_search_url(query))
+
+    elif "ACTION: Scheduling" in result:
+        keywords = result.split("-")[1].strip()
+        if "," in keywords:
+            result = result.replace("\n","")
+            keywords = [word.strip() for word in keywords.split(",")]
+        else:
+            keywords = [word.strip() for word in keywords.split("\n")]
+        values = []
+        for idx, metric in enumerate(keywords):
+            values.append(metric.split(" ")[1])
+            
+        confirmation = input("Is this correct? y/n: ")
+        if confirmation in ("Yes", "yes", "y") and verify_scheduling_output(result):
+            schedule_event(values[0],values[1],int(values[2]), int(values[3]), int(values[4]),int(values[5]),int(values[6]),int(values[7]))
+        else:
+            print("There was an error in the scheduling format, please try again.")
