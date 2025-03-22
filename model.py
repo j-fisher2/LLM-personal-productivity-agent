@@ -3,8 +3,6 @@ import webbrowser
 import time
 from schedule_event import schedule_event, verify_scheduling_output
 
-#schedule_event(event_name, location, 2025, 3, 25, 10, 0, duration_minutes, calendar_name="Work")
-
 def get_google_search_url(query):
     return f"https://www.google.com/search?q={query.replace(' ', '+')}"
 
@@ -108,7 +106,7 @@ while True:
         values = []
         for idx, metric in enumerate(keywords):
             values.append(metric.split(" ")[1])
-            
+
         confirmation = input("Is this correct? y/n: ")
         if confirmation in ("Yes", "yes", "y") and verify_scheduling_output(result):
             schedule_event(values[0],values[1],int(values[2]), int(values[3]), int(values[4]),int(values[5]),int(values[6]),int(values[7]))
