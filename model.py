@@ -66,7 +66,7 @@ while True:
         duration_minutes: 35
     - "Schedule a meeting on April 5 at 2:20PM at Harry HQ lasting 35 minutes" 
     → ACTION: Scheduling your event with the following fields - 
-        event_name: MeetingAtHarry HQ,
+        event_name: MeetingAtHarryHQ,
         location: Harry HQ,
         start_year: 2025,
         start_month: 4,
