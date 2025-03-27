@@ -10,8 +10,11 @@ def schedule_reminder(title: str, body: str, reminder_year, reminder_month, remi
         end tell
         '''
         subprocess.run(["osascript", "-e", apple_script], check=True)
-        print(f"Reminder '{title}' scheduled successfully for {reminder_time}.")
+        print(f"✅ Reminder '{title}' scheduled successfully for {reminder_time}.")
     except Exception as e:
-        print(f"Failed to schedule reminder: {e}")
+        print(f"❌ Failed to schedule reminder: {e}")
 
-schedule_reminder("Meeting with John", "Discuss project updates.", 2025, 3, 28, 9,30)
+
+def verify_reminder_output(text):
+    required_keys = ["title: ", "details: ", "start_year: ", "start_month: ", "start_day: ", "start_hour: ", "start_minute: "]
+    return all(key in text for key in required_keys)
