@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 def schedule_event(event_name, location, start_time_year, start_time_month, start_time_day, start_time_hour, start_time_minute, duration_minutes, start_time_second = 0, calendar_name="Work"):
 
-    start_time = start_time = datetime(start_time_year, start_time_month, start_time_day, start_time_hour, start_time_minute, start_time_second)
+    start_time = datetime(start_time_year, start_time_month, start_time_day, start_time_hour, start_time_minute, start_time_second)
     
     end_time = start_time + timedelta(minutes=duration_minutes)
 
