@@ -26,14 +26,12 @@ while True:
     ✅ **Action Format:**  
     - If the user asks to open, launch, or visit a website, **always respond with:**  
         ACTION: Opening [component_name] where the component_name is a website in proper format.
-    - If the component is unknown, simulate it by saying:  
-        ACTION: Attempting to open [component_name]
     - If the user asks you to search for something or to find something **always respond with:**
         ACTION: Searching [component_name] where the component_name is their query and it is properly formatted for google searches without `for` as a prefix.
     - If the user asks you to schedule an event or meeting, make sure that the user provides an event name, an event location, a start year, a start month, a start day, a start hour and a start minute and **always respond with:**:
         ACTION: Scheduling your event with the following fields - [component_name] where the component_name is a JSON object of all the fields you have extracted from the query. If minutes are not provided they are set to 0. If a year is not provided you may assume the year is 2025 and just place 2025 in the response with no other details. If an event name is not provided, assume it is the same as the location and just place it in the response with no other details. **always** use commas to seperate the fields. **do not** add any additional output or comments to your response and always format it exactly as in the examples below.
     - If the user asks you to schedule a reminder, make sure that the user provides a reminder title, a reminder body, a start year, a start month, a start day, a start hour and a start minute and **always respond with:**:
-        ACTION: Setting your reminder with the following fields - [component_name] where the component_name is a JSON object of all the fields you have extracted from the query. If minutes are not provided they are set to 0. If a year is not provided you may assume the year is 2025 and just place 2025 in the response with no other details. If a reminder body is not provided, assume it is an empty string just place it in the response with no other details. **always** use commas to seperate the fields. **do not** add any additional output or comments to your response and always format it exactly as in the examples below.
+        ACTION: Setting your reminder with the following fields - [component_name] where the component_name is a JSON object of all the fields you have extracted from the query. If minutes are not provided they are set to 0. If a year is not provided you may assume the year is 2025 and just place 2025 in the response with no other details. If reminder details are not provided, assume it is an empty string just place it in the response with no other details. but try to extract an additional detail to put in the details. **always** use commas to seperate the fields. **always** make details and title snake_casing. **do not** add any additional output or comments to your response and always format it exactly as in the examples below.
 
     🚫 **No Action Format:**  
     - If the request **does not** require opening something or retrieving a query response, or to schedule a meeting or event, respond with:  
@@ -88,13 +86,23 @@ while True:
         start_hour: 14,
         start_minute: 20
     
-    - "Remind me on for March 28 at 9am that I need to go to the dentist and that I have to take the secondary car" 
+    - "Remind me on March 28 at 9am that I need to go to the dentist and that I have to take the secondary car" 
     → ACTION: Setting your reminder with the following fields - 
         title: Go_to_the_dentist,
         details: Take_the_secondary_car,
         start_year: 2025,
         start_month: 3,
         start_day: 28,
+        start_hour: 9,
+        start_minute: 0
+    
+    - "can you schedule a reminder for me on April 10 at 9am letting me know that i have an exam at 1pm?"
+    → ACTION: Setting your reminder with the following fields -
+        title: Exam_reminder,
+        details: exam_is_at_1pm,
+        start_year: 2025,
+        start_month: 4,
+        start_day: 10,
         start_hour: 9,
         start_minute: 0
 
@@ -140,7 +148,7 @@ while True:
         else:
             print("There was an error in the scheduling format, please try again.")
         
-    elif "reminder" in result:
+    elif "reminder" in result or "Reminder" in result:
         keywords = result.split("-")[1].strip()
         if "," in keywords:
             result = result.replace("\n","")
